@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * {
+       box-sizing: border-box;
+       font-family: "Roboto";
+       font-weight: 400;
+    }
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      xxoverflow: hidden;
+      margin: 0;
+      xxwidth: 1910px;
+      xxheight: 1060px;
+      background-color: #00205b;
+      color: #E8B00F;
+      border: 5px solid #E8B00F ;
+    }
+    h1{
+      color:#3AAA35;
+      text-align:center;
+    }
+    img {
+      object-fit: contain;
+      width: 100%;
+      height: 100%;
+    }
+    .img-container{
+      width:50%;
+      border: 3px solid #3AAA35;
+      border-radius: 6px;
+      overflow: hidden; 
+      text-align:center;
+      margin-left: auto;
+      margin-right: auto;
+      padding:20px;
+    }    
+    .slideContainer {
+      display: inline-block;
+      xxborder: 2px solid red;
+      height: 954px;
+      xxwidth: 1504px;
+      width: 1350px;
+      xxoverflow: hidden;
+      resize: both;
+      xxdisplay: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #00205b;
+      xxfloat: left;
+    }
+    .slideImage {
+      xxflex-basis: 40%;
+      xxobject-fit: contain;
+      xxposition: fixed;
+      padding: 10px;
+      max-width: 1496px;
+      max-height: 946px;
+      xxmin-height: 950px;
+      xxfloat: left;
+      xxmargin: auto;
+      xdisplay: block;
+    }
+   .slideText {
+      display: inline-block;
+      xxborder: 2px solid green;
+      xxfloat: left;
+      xxword-wrap: break-word;
+      position:absolute;
+      xxposition: fixed;
+      xxvertical-align: top;
+      top: 10%;
+      text-align: center;
+      width: 540px;
+      height: 946;
+      padding: 20px;
+      xxmargin: 5px;
+      xxfont-weight: 400;
+      xxfont-family: Roboto;
+      font-size: 30px;
+      z-index:9;
+      background-color: #00205b;
+    }
+    .slideTitle {
+      display: inline-block;
+      xxborder: 2px solid blue;
+      width: 1440px;
+      xxword-wrap: break-word;
+      text-align: center;
+      padding: 5px;
+      margin: 5px;
+      font-weight: 400;
+      font-family: Roboto;
+      font-size: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PiCam Server</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<h1>PiCam Live Streaming</h1>
+<div class="img-container">
+  <img src="{{ url_for('video_feed') }}">
+</div>
+</body>
+</html>
