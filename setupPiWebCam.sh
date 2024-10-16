@@ -72,6 +72,8 @@ sudo apt install net-tools python-is-python3 \
                  nmap net-tools rfkill psmisc \
                  autossh firmware-ralink  -y
 
+sudo apt install -y python3-picamera2 
+
 cat <<EOF | sudo tee /etc/default/locale
 LANG=en_US.UTF-8
 EOF
