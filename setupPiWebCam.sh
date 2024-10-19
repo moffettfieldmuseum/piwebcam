@@ -1,21 +1,29 @@
 #!/usr/bin/env bash
 set -u
-set -vx
+# set -vx
 
 ARG[1]="piwebcam"
 ARG[2]="piwebcam"
 argno=0
-USERID=pmeigs
+for i in ${@}; do
+  ((argno += 1))
+  ARG[${argno}]=$i
+  echo $argno $i 
+done
+USERID="pmeigs"
 
 BUILDHOST=${ARG[1]}
 TARGETHOST=${ARG[2]}
 
-# echo $BUILDHOST $TARGETHOST ${EXHIB}
+echo ${USERID} ${BUILDHOST} ${TARGETHOST}
 
 # TARGETHOST=mfhsm-candy-10.javaxpresso.com
 
 sed -i -e '/|1|/d' ~/.ssh/known_hosts
 ssh -t -l ${USERID}  ${TARGETHOST}<<ENDOFDATA
+echo in ssh 1
+set -u 
+set -v -x
 mkdir -p .ssh
 mkdir -p .config
 touch .config/gnome-initial-setup-done
@@ -30,54 +38,64 @@ EOF
 cat <<EOF>>.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDdlyzqppXx3PZaC1+sVGhv9ZPPdZBqS13KMjGG6rLeKllpRweLD0NYKVZAxM7geqWpN0ddmFp63nb2N8/TPLFE6Foer4VoWvucpjoMQwI7t6SEQ6PT3Zi64hLoBGp8F4p6jxMrp0n0GM6JimHpADUm0PrL+GiZ/Ti6133eXyWiTcOeEXsO5A9613/e38LZbaNl7OXSugkYdZ6vP+9mq75B5TLaqdJTYi1s+91uTjIlUIH1MIJ6+CWqGnkvh29p82fnjZ9ahhNalmybGRAV9R76/VoujghXN6YFWS6xkAFB+a6wr0tVXfxGDvNKz3ON72WqIqG48A3DHw6LObGsj0VN imported-openssh-key
 EOF
+sort -uo .ssh/authorized_keys{,}
 chmod 700 .ssh
 chmod 600 .ssh/*
 ls -ltrd .ssh .ssh/*
-echo $(hostname)
+echo \$(hostname)
 ENDOFDATA
 
+scp *.py  ${USERID}@${TARGETHOST}:.
+
+# exit
+
+
 ssh -t -l ${USERID} ${TARGETHOST} <<ENDOFDATA
+set -u 
+# set -vx
 
 
-
-sudo apt clean
+sudo apt-get clean
 mkdir -p ./Downloads
 
-sudo apt update
+sudo apt-get update
 
-sudo apt purge 'python2*' -y
+sudo apt-get purge 'python2*' -y
 
-sudo apt purge gnome-sudoku  gnome-mines sgt-puzzles \
+sudo apt-get purge gnome-sudoku  gnome-mines sgt-puzzles \
                gnome-chess gnome-2048 five-or-more four-in-a-row \
                hitori gnome-klotski gnome-tetravex quadrapassel -y
-sudo apt purge iagno lightsoff four-in-a-row gnome-robots pegsolitaire \
+sudo apt-get purge iagno lightsoff four-in-a-row gnome-robots pegsolitaire \
                gnome-2048 hitori gnome-klotski gnome-mines gnome-mahjongg tali \
                gnome-sudoku quadrapassel swell-foop gnome-tetravex gnome-taquin aisleriot gnome-nibbles -y
 
 
 # we need this for chrome-book wifi
 
-sudo apt install firmware-iwlwifi firmware-intel-sound firmware-realtek -y 
+sudo apt-get install firmware-iwlwifi firmware-intel-sound firmware-realtek -y 
 sudo touch /etc/modprobe.d/iwlwifi.conf
 sudo sed -i.bak -e '
   /^ *options iwlwifi enable_ini *=/d 
   \$aoptions iwlwifi enable_ini=N
 ' /etc/modprobe.d/iwlwifi.conf
 
-sudo apt full-upgrade -y
-sudo apt autoremove -y
+sudo apt-get full-upgrade -y
+sudo apt-get autoremove -y
 
-sudo apt install net-tools python-is-python3 \
+sudo apt-get install net-tools python-is-python3 \
                  git rsync smbclient cifs-utils \
                  nmap net-tools rfkill psmisc \
                  autossh firmware-ralink  -y
 
-sudo apt install -y python3-picamera2 
+sudo apt-get install -y python3-picamera2 
+sudo apt-get install -y libopencv-dev python3-opencv 
 
 cat <<EOF | sudo tee /etc/default/locale
 LANG=en_US.UTF-8
 EOF
 # sudo locale-gen
+
+
 
 sudo sed -i -e '/^#/! s/^/\# /g' -e '/# en_US.UTF-8/ s/^\# //g' /etc/locale.gen
 sudo locale-gen en_US.UTF-8
@@ -104,15 +122,16 @@ sudo nmcli d wifi connect holguin95admin   password cloudyzoo558
 
 sudo nmcli -t c
 # UUID="$(nmcli -t c | grep ':eth0$' | head -1 | cut -f2 -d:)"
-for i in $(nmcli -t c | grep -v ':lo$' | tr ' ' '_' | cut -f2 -d:); do 
-  echo $i
-  sudo nmcli con mod ${i} ipv6.method "disabled"
-  sudo nmcli con up  ${i} 
+for i in \$(nmcli -t c | grep -v ':lo\$' | tr ' ' '_' | cut -f2 -d:); do 
+  echo "[\$i]"
+  echo sudo nmcli con mod "\${i}" ipv6.method "disabled"
+  echo sudo nmcli con up  "\${i}" 
+  echo sudo nmcli con mod "\${i}" connection.metered yes
+  echo sudo nmcli -f connection.metered con show "\${i}"
 done
 
 
 sudo nmcli c 
-
 sudo raspi-config nonint do_expand_rootfs
 echo REBOOT now.
 ENDOFDATA
