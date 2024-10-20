@@ -19,4 +19,17 @@ sed -i -e  '
 
 '  mediamtx.yml
 
+sudo systemctl stop  mediamtx.service
+sudo systemctl disable  mediamtx.service
 
+sudo tee /etc/systemd/system/mediamtx.service >/dev/null << EOF
+[Unit]
+Wants=network.target
+[Service]
+ExecStart=$(pwd)/mediamtx $(pwd)/mediamtx.yml
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable  mediamtx.service

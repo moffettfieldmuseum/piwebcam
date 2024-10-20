@@ -45,7 +45,7 @@ ls -ltrd .ssh .ssh/*
 echo \$(hostname)
 ENDOFDATA
 
-scp *.py  ${USERID}@${TARGETHOST}:.
+scp *.py *.sh  ${USERID}@${TARGETHOST}:.
 
 # exit
 
