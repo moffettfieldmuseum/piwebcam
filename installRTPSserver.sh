@@ -6,7 +6,11 @@ mkdir -p  ~/mediamtx
 mkdir -p ~/Downloads
 cd  ~/Downloads
 rm -f  mediamtx*
-wget https://github.com/bluenviron/mediamtx/releases/download/v1.9.3/mediamtx_v1.9.3_linux_arm64v8.tar.gz 
+if [[ $(uname -m) ==  armv6l ]]; then
+  wget https://github.com/bluenviron/mediamtx/releases/download/v1.9.3/mediamtx_v1.9.3_linux_armv6.tar.gz
+else 
+  wget https://github.com/bluenviron/mediamtx/releases/download/v1.9.3/mediamtx_v1.9.3_linux_arm64v8.tar.gz 
+fi
 cd ~/mediamtx
 tar -zxf ~/Downloads/mediamtx*
 sed -i -e  '
